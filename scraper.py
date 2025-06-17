@@ -6,6 +6,9 @@ import re
 BASE_URL = 'https://catalog.uic.edu/' #parent website used for building url
 UIC_URL = 'https://catalog.uic.edu/all-course-descriptions/'
 
+def parseHours(hours_str):
+    hour_str = hour_str.split().lower().replace('hours', '').strip()
+    print(hour_str)
 
 def scrapeFrontPage():
     major_links_dict = {}
@@ -53,7 +56,8 @@ def getMasterCourseList(allCourses):
     pattern = re.compile(r"""
         ^([A-Z]+)\s?(\d+)\.              #subject and course number ex: 'CS 100.'
         \s+(.+?)\.                       # course title, non-greedy up to next period
-        \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hours)\.?$  # Hours: 3, 1-3, or '3 or 4'
+        # \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hour)\.?$  # Hour: 3, 1-3, or '3 or 4'                         
+        \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hours?)\.?$  # Hours: 3, 1-3, or '3 or 4'
     """, re.VERBOSE)
 
     for course in allCourses:
@@ -71,22 +75,23 @@ def getMasterCourseList(allCourses):
             course_num = f"{subject}___{number}"  # delimit with whatever
             
             # debugging
-            print(f"Code: {course_num}, Title: {course_title}, Hours: {course_hours}")
+            # print(f"Code: {course_num}, Title: {course_title}, Hours: {course_hours}")
  
-
+            # parseHours(course_hours)
             
             subject = "".join(char for char in course_num if char.isalpha())
-            with open(f"mastercourselist_{subject}.txt", 'a') as file:
+            with open(f"data/mastercourselist_{subject}.txt", 'a') as file:
                 file.write(f"{course_num}\t{course_hours}\n")
         else:
             print(course_title_hours)
 
 # def writeToFile(filename:str):
-#     with open(f"{filename}.txt", 'w') as file:
-#         file.write()
-
+#   pass
 
 data = scrapeFrontPage()
-csLink = data['Computer Science (CS)']
+# csLink = data['Computer Science (CS)']
+# scrapeSubject(csLink)
 
-scrapeSubject(csLink)
+for d in data:
+    scrapeSubject(data[d])
+
