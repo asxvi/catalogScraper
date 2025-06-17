@@ -1,0 +1,115 @@
+CS___100	3 hours
+CS___107	4 hours
+CS___109	3 hours
+CS___111	3 hours
+CS___112	3 hours
+CS___113	3 hours
+CS___141	3 hours
+CS___151	3 hours
+CS___194	1-3 hours
+CS___211	3 hours
+CS___251	4 hours
+CS___261	4 hours
+CS___277	3 hours
+CS___294	1-3 hours
+CS___301	3 hours
+CS___341	3 hours
+CS___342	3 hours
+CS___351	3 hours
+CS___361	4 hours
+CS___362	4 hours
+CS___377	3 hours
+CS___378	3 hours
+CS___394	1-3 hours
+CS___398	1-3 hours
+CS___401	3 or 4 hours
+CS___402	3 or 4 hours
+CS___407	3 or 4 hours
+CS___411	3 or 4 hours
+CS___412	3 or 4 hours
+CS___415	3 or 4 hours
+CS___418	3 or 4 hours
+CS___421	3 or 4 hours
+CS___422	3 or 4 hours
+CS___423	3 or 4 hours
+CS___424	3 or 4 hours
+CS___425	0-4 hours
+CS___426	3 or 4 hours
+CS___427	3 or 4 hours
+CS___428	3 or 4 hours
+CS___440	3 or 4 hours
+CS___441	3 or 4 hours
+CS___442	3 or 4 hours
+CS___450	3 or 4 hours
+CS___453	3 or 4 hours
+CS___454	3 or 4 hours
+CS___455	3 or 4 hours
+CS___461	3 or 4 hours
+CS___463	3 or 4 hours
+CS___466	3 or 4 hours
+CS___468	3 or 4 hours
+CS___472	3 or 4 hours
+CS___473	3 or 4 hours
+CS___474	3 or 4 hours
+CS___475	3 or 4 hours
+CS___476	3 or 4 hours
+CS___477	3 or 4 hours
+CS___478	3 or 4 hours
+CS___479	3 or 4 hours
+CS___480	3 or 4 hours
+CS___483	3 or 4 hours
+CS___484	3 or 4 hours
+CS___485	4 or 5 hours
+CS___487	3 or 4 hours
+CS___488	3 or 4 hours
+CS___489	3 or 4 hours
+CS___491	1-4 hours
+CS___494	1-4 hours
+CS___499	0 hours
+CS___501	4 hours
+CS___502	4 hours
+CS___505	4 hours
+CS___506	4 hours
+CS___511	4 hours
+CS___512	4 hours
+CS___514	4 hours
+CS___515	4 hours
+CS___516	4 hours
+CS___517	4 hours
+CS___518	4 hours
+CS___519	4 hours
+CS___520	4 hours
+CS___521	4 hours
+CS___522	4 hours
+CS___523	4 hours
+CS___524	4 hours
+CS___526	4 hours
+CS___528	4 hours
+CS___529	4 hours
+CS___530	4 hours
+CS___531	4 hours
+CS___532	4 hours
+CS___533	4 hours
+CS___535	4 hours
+CS___540	4 hours
+CS___550	4 hours
+CS___553	4 hours
+CS___554	4 hours
+CS___559	4 hours
+CS___565	4 hours
+CS___566	4 hours
+CS___568	4 hours
+CS___569	4 hours
+CS___580	4 hours
+CS___581	4 hours
+CS___582	4 hours
+CS___583	4 hours
+CS___584	4 hours
+CS___586	4 hours
+CS___587	4 hours
+CS___588	4 hours
+CS___590	4 hours
+CS___594	4 hours
+CS___597	0-9 hours
+CS___598	0-16 hours
+CS___599	0-16 hours
