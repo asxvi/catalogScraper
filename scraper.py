@@ -6,9 +6,51 @@ import re
 BASE_URL = 'https://catalog.uic.edu/' #parent website used for building url
 UIC_URL = 'https://catalog.uic.edu/all-course-descriptions/'
 
+
+# hours come out strange compared to the desired output, so we have to manually parse them
+# 3 possibilities: 'n' credits, 'n-m' credits, 'n or m' credits
 def parseHours(hours_str):
-    hour_str = hour_str.split().lower().replace('hours', '').strip()
-    print(hour_str)
+    # remove the words hour or hours and remove all extra white space
+    clean_str = hours_str.lower().replace("hours", "").replace("hour", "").strip()
+    first_num = None; second_num = None
+    
+    # first check for range, and take values to left and right of '-'
+    if '-' in clean_str:
+        first_num, second_num = clean_str.split('-')
+    # otherwise the credits are either 'n or m' creidts or 'n' credits
+    elif 'or' in clean_str:
+        items = clean_str.split('or')
+        first_num = items[0].strip()
+        second_num = items[1].strip()
+    else:
+        first_num = clean_str
+        second_num = clean_str
+
+    return (first_num, second_num)
+
+
+def createListHours(hours_str):
+    '''
+        call helper parse function and return a string of the entire 
+        range of credit hours for the course. 
+        Note: Have to convert from int to str a few times within this entire process
+    '''
+
+    first_num, second_num = parseHours(hours_str)
+    rv = []
+    try:
+        first_num = int(first_num)
+        second_num = int(second_num)
+    except ValueError:
+        print(f"Can't parse the hours {hours_str}")
+        rv = []
+
+    if first_num == second_num:
+        rv = [first_num]
+    else:
+        rv = list(range(first_num, second_num + 1))
+
+    return(','.join(map(str, rv)))
 
 def scrapeFrontPage():
     major_links_dict = {}
@@ -62,8 +104,6 @@ def getMasterCourseList(allCourses):
 
     for course in allCourses:
         course_title_hours = (course.find('p', class_='courseblocktitle').text)
-        # print(course_title_hours)
-        
         match = pattern.match(course_title_hours)
         
         if match:
@@ -72,13 +112,15 @@ def getMasterCourseList(allCourses):
             course_title = match.group(3).strip()
             course_hours = match.group(4).strip()
             
-            course_num = f"{subject}___{number}"  # delimit with whatever
+            course_num = f"{subject}___{number}"  # delimit with whatever, this follows example 6/16/25
             
             # debugging
             # print(f"Code: {course_num}, Title: {course_title}, Hours: {course_hours}")
  
-            # parseHours(course_hours)
+            course_hours = (createListHours(course_hours))
             
+                
+        
             subject = "".join(char for char in course_num if char.isalpha())
             with open(f"data/mastercourselist_{subject}.txt", 'a') as file:
                 file.write(f"{course_num}\t{course_hours}\n")
@@ -89,9 +131,9 @@ def getMasterCourseList(allCourses):
 #   pass
 
 data = scrapeFrontPage()
-# csLink = data['Computer Science (CS)']
-# scrapeSubject(csLink)
+csLink = data['Computer Science (CS)']
+scrapeSubject(csLink)
 
-for d in data:
-    scrapeSubject(data[d])
+# for d in data:
+    # scrapeSubject(data[d])
 
