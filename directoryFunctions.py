@@ -24,11 +24,12 @@ def clearTxt():
 def getAllSubjectCourses():
     folderPath = "./data/"
 
+    # cool fact is there are about 7501 courses avaliable in catalog
     for file in os.listdir(folderPath):
         with open(f'{folderPath}{file}', 'r') as openedFile:
             for line in openedFile:
                 print(line.split()[0])
-        
+            # mastercourselist_
 
 
 if __name__ == '__main__':
