@@ -96,8 +96,8 @@ def getMasterCourseList(allCourses):
     baseFilename = 'mastercourselist'
 
     pattern = re.compile(r"""
-        ^([A-Z]+)\s?(\d+)\.              #subject and course number ex: 'CS 100.'
-        \s+(.+?)\.                       # course title, non-greedy up to next period
+        ^([A-Z]+)\s+(\d+)\.              #subject and course number ex: 'CS 100.'
+        \s+(.+?[.?!])                       # course title, non-greedy up to next period
         # \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hour)\.?$  # Hour: 3, 1-3, or '3 or 4'                         
         \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hours?)\.?$  # Hours: 3, 1-3, or '3 or 4'
     """, re.VERBOSE)
@@ -126,14 +126,14 @@ def getMasterCourseList(allCourses):
                 file.write(f"{course_num}\t{course_hours}\n")
         else:
             print(course_title_hours)
+            print(match)
 
 # def writeToFile(filename:str):
 #   pass
 
 data = scrapeFrontPage()
-csLink = data['Computer Science (CS)']
+csLink = data['Computer Science (CS)']   #testing data point
 scrapeSubject(csLink)
 
 # for d in data:
-    # scrapeSubject(data[d])
-
+#     scrapeSubject(data[d])
