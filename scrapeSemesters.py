@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+from scraper import getCourseNames, scrapeFrontPage
 
 
 # all semesters-  use this to update the 2 links below
@@ -33,6 +34,7 @@ def scrapeStaticFrontPage(BASE_URL):
     return major_links_dict
 
 
+# gets all of the coruses for current subject. returns array [CS107, CS109...]
 def getAllCourses(SUBJECT_URL):
     coursesInSemester = []
     response = requests.get(SUBJECT_URL)
@@ -45,14 +47,13 @@ def getAllCourses(SUBJECT_URL):
             # course_name.replace(' ', '___')
             coursesInSemester.append(course_name.replace(' ', '___'))
     
-    print(coursesInSemester)
     return coursesInSemester
 
-data = scrapeStaticFrontPage(BASE_FALL_URL)
+fallLinks = scrapeStaticFrontPage(BASE_FALL_URL)
+springLinks = scrapeStaticFrontPage(BASE_SPRING_URL)
 
-# for d in data:
-    # print(d, '  ', data[d])
+fcs = (fallLinks['CS'])
+scs = (fallLinks['CS'])
 
-cs = (data['CS'])
-getAllCourses(cs)
-
+spring = getAllCourses(fcs)
+spring = getAllCourses(scs)

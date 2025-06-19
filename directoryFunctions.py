@@ -21,5 +21,16 @@ def clearTxt():
         for file in txtFiles:
             os.remove(os.path.join(directory, file))
 
+def getAllSubjectCourses():
+    folderPath = "./data/"
+
+    for file in os.listdir(folderPath):
+        with open(f'{folderPath}{file}', 'r') as openedFile:
+            for line in openedFile:
+                print(line.split()[0])
+        
+
+
 if __name__ == '__main__':
-    clearTxt()
+    # clearTxt()
+    getAllSubjectCourses()
