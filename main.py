@@ -1,6 +1,6 @@
 import selenium
 from bs4 import BeautifulSoup
-from scraper import scrapeFrontPage, scrapeSubject
+from scrapeNameCH import scrapeFrontPage, scrapeSubject
 from directoryFunctions import getAllSubjectCourses
 
 ''' contains URL links to various URL's used in program

@@ -120,6 +120,7 @@ def getMasterCourseList(allCourses):
             
             subject = "".join(char for char in course_num if char.isalpha())
             # write to 2 different files. this should reduce the runtime by a little
+            # note it seemslike this works 57 runtime for 2 writes
             with open(f"data/mastercourselist_{subject}.txt", 'a') as file:
                 file.write(f"{course_num}\t{course_hours}\n")
             with open(f"dataCH/courseofferings_{subject}.txt", 'a') as file:

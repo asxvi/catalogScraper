@@ -19,20 +19,27 @@ def clearTxt(directory):
         for file in txtFiles:
             os.remove(os.path.join(directory, file))
 
-def getAllSubjectCourses():
-    folderPath = "./data/"
+def getAllSubjectCourses(directory, avaliableCourses):
+    for file in sorted(os.listdir(directory)):                      # sort directory alphabetically like it shows in actual dir
+        with open(f'{directory}{file}', 'r+') as openedFile:
+            
+            if openedFile == 'courseofferings_CS':
+            
+            lines = openedFile.readlines()
 
-    # cool fact is there are about 7501 courses avaliable in catalog
-    for file in os.listdir(folderPath):
-        with open(f'{folderPath}{file}', 'r') as openedFile:
-            for line in openedFile:
-                print(line.split()[0])
-            # mastercourselist_
-
+            lines[]
+            for line in lines:
+                parts = line.strip().split()
+                if parts and parts[0] in avaliableCourses:
+                    parts[1] = '1'
+                openedFile.write('\t'.join(parts) + '\n')
+                i+=1
+                
 
 if __name__ == '__main__':
     dir1 = './data/'
-    clearTxt(dir1)
     dir2 = './dataCH/'
-    clearTxt(dir2)
-    # getAllSubjectCourses()
+    # clearTxt(dir1)
+    # clearTxt(dir2)
+    
+    # getAllSubjectCourses(dir2)
