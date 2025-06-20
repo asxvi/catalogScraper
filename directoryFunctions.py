@@ -19,21 +19,31 @@ def clearTxt(directory):
         for file in txtFiles:
             os.remove(os.path.join(directory, file))
 
+
+
+def replace_line(file_name, line_num, text):
+    lines = open(file_name, 'r').readlines()
+    lines[line_num] = text
+    out = open(file_name, 'w')
+    out.writelines(lines)
+    out.close()
+
+
 def getAllSubjectCourses(directory, avaliableCourses):
     for file in sorted(os.listdir(directory)):                      # sort directory alphabetically like it shows in actual dir
-        with open(f'{directory}{file}', 'r+') as openedFile:
+        if file == 'courseofferings_CS.txt':
+            with open(f'{directory}{file}', 'r+') as openedFile:
             
-            if openedFile == 'courseofferings_CS':
-            
-            lines = openedFile.readlines()
-
-            lines[]
-            for line in lines:
-                parts = line.strip().split()
-                if parts and parts[0] in avaliableCourses:
-                    parts[1] = '1'
-                openedFile.write('\t'.join(parts) + '\n')
-                i+=1
+                lines = openedFile.readlines()
+                i=0
+                for line in lines:
+                    parts = line.strip().split()
+                    if parts and parts[0] in avaliableCourses:
+                        parts[1] = '1'
+                        print(parts)
+                        replace_line(f'{directory}{file}', i, '\t'.join(parts) + '\n')
+                    # openedFile.write('\t'.join(parts) + '\n')
+                    i+=1
                 
 
 if __name__ == '__main__':
