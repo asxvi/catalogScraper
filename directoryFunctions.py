@@ -20,30 +20,24 @@ def clearTxt(directory):
             os.remove(os.path.join(directory, file))
 
 
-
-def replace_line(file_name, line_num, text):
-    lines = open(file_name, 'r').readlines()
-    lines[line_num] = text
-    out = open(file_name, 'w')
-    out.writelines(lines)
-    out.close()
-
-
 def getAllSubjectCourses(directory, avaliableCourses):
     for file in sorted(os.listdir(directory)):                      # sort directory alphabetically like it shows in actual dir
         if file == 'courseofferings_CS.txt':
-            with open(f'{directory}{file}', 'r+') as openedFile:
+            fullPath = f'{directory}{file}'
             
+            # read file in, and compare if every course is in avaliableCourses for current semester
+            with open(fullPath, 'r') as openedFile:
                 lines = openedFile.readlines()
-                i=0
-                for line in lines:
-                    parts = line.strip().split()
-                    if parts and parts[0] in avaliableCourses:
-                        parts[1] = '1'
-                        print(parts)
-                        replace_line(f'{directory}{file}', i, '\t'.join(parts) + '\n')
-                    # openedFile.write('\t'.join(parts) + '\n')
-                    i+=1
+
+            updatedLines = []           # stores all non updated and updated strings in format: 'CS___101\t1\t0'
+            for i, line in enumerate(lines):
+                parts = line.strip().split()
+                if parts and parts[0] in avaliableCourses:
+                    parts[1] = '1'
+                updatedLines.append('\t'.join(parts) + '\n')
+    
+            with open(fullPath, 'w') as openedFile:
+                openedFile.writelines(updatedLines)
                 
 
 if __name__ == '__main__':
