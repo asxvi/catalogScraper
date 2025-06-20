@@ -119,8 +119,11 @@ def getMasterCourseList(allCourses):
             course_hours = (createListHours(course_hours))
             
             subject = "".join(char for char in course_num if char.isalpha())
+            # write to 2 different files. this should reduce the runtime by a little
             with open(f"data/mastercourselist_{subject}.txt", 'a') as file:
                 file.write(f"{course_num}\t{course_hours}\n")
+            with open(f"dataCH/courseofferings_{subject}.txt", 'a') as file:
+                file.write(f"{course_num}\t0\t0\n")
         else:
             print(course_title_hours)
             print(match)
@@ -172,10 +175,10 @@ def getCourseNames(URL_subject):
 
 
 
-# data = scrapeFrontPage()
+data = scrapeFrontPage()
 
 # for d in data:
-#     clean = getCourseNames(data[d])
+    # clean = getCourseNames(data[d])
 #     print(clean)
 #     for coursenum in clean:
 #         print(coursenum)
@@ -185,5 +188,5 @@ def getCourseNames(URL_subject):
 # csLink = data['Computer Science (CS)']   #testing data point
 # scrapeSubject(csLink)
 
-# for d in data:
-#     scrapeSubject(data[d])
+for d in data:
+    scrapeSubject(data[d])

@@ -1,9 +1,7 @@
 import os
 
 # helper function to quickly remove all garbage/ outdated txt files
-def clearTxt():
-    directory = './data/'
-
+def clearTxt(directory):
     if not os.path.isdir(directory):
         print("Directory doesn't exist.")
         return
@@ -33,5 +31,8 @@ def getAllSubjectCourses():
 
 
 if __name__ == '__main__':
-    # clearTxt()
-    getAllSubjectCourses()
+    dir1 = './data/'
+    clearTxt(dir1)
+    dir2 = './dataCH/'
+    clearTxt(dir2)
+    # getAllSubjectCourses()

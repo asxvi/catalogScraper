@@ -24,8 +24,7 @@ def scrapeStaticFrontPage(BASE_URL):
     response = requests.get(BASE_URL)
     major_links_dict = {}
     if response.status_code == 200:
-        # continue with scraping
-        soup = BeautifulSoup(response.content, 'html.parser')
+        # continue with scraping        soup = BeautifulSoup(response.content, 'html.parser')
         
         # 2 columns with all listed courses. find both and go thru each ones elements to get links
         # NOTE this portion is manual and subject to change with change in website design
@@ -76,11 +75,33 @@ def getAllCourses(SUBJECT_URL):
 # # spring = getAllCourses(scs)
 
 
+semesterAvaliability = [[str, 0, 0]]
 
 fallLinksDict = scrapeStaticFrontPage(BASE_FALL_URL)            # get all the links so we iter thru
-i = 0
-for link in fallLinksDict:                                      # for every link we have to scrape indiv info
-    i+=1
-    print(getAllCourses(fallLinksDict[link])[0].split('_')[0])
+springLinksDict = scrapeStaticFrontPage(BASE_SPRING_URL)            # get all the links so we iter thru
 
-print(i)
+fallNumSubjects = 0
+fallNumCourses = 0
+for link in fallLinksDict:                                      # for every link we have to scrape indiv info
+    fallNumSubjects +=1
+    # abbrev = (getAllCourses(fallLinksDict[link])[0].split('_')[0])  # get part before number ex: CS
+    
+    avaliableCourses = getAllCourses(fallLinksDict[link])
+    for course in avaliableCourses:
+        fallNumCourses+=1
+        # semesterAvaliability.append([course, 1, 0])
+
+springNumSubjects = 0
+springNumCourses = 0
+for link in springLinksDict:                                      # for every link we have to scrape indiv info
+    springNumSubjects +=1
+    # abbrev = (getAllCourses(springLinksDict[link])[0].split('_')[0])  # get part before number ex: CS
+    
+    avaliableCourses = getAllCourses(springLinksDict[link])
+    for course in avaliableCourses:
+        springNumCourses +=1
+        # semesterAvaliability.append([course, 0, 1])
+    
+print(f'FALL: NumSubjects: {fallNumSubjects} NumCourses: {fallNumCourses}.')
+print(f'Spring: NumSubjects: {springNumSubjects} NumCourses: {springNumCourses}.')
+
