@@ -172,14 +172,6 @@ def getCourseNames(URL_subject):
 
 data = scrapeFrontPage()
 
-# for d in data:
-    # clean = getCourseNames(data[d])
-#     print(clean)
-#     for coursenum in clean:
-#         print(coursenum)
-
-#     break
-
 # csLink = data['Computer Science (CS)']   #testing data point
 # scrapeSubject(csLink)
 

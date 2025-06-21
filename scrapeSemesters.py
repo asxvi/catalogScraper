@@ -66,56 +66,66 @@ def getAllCourses(SUBJECT_URL):
     return coursesInSemester
 
 
-FALLsemesterAvaliability = []
-SPRINGsemesterAvaliability = []
+def getPrerequisites(SUBJECT_URL):
+    '''
+        main function that might call helper to parse out all of the prerequisites for SUBJECT_URL in chosen semester
 
-fallLinksDict = scrapeStaticFrontPage(BASE_FALL_URL)            # get all the links so we iter thru
-springLinksDict = scrapeStaticFrontPage(BASE_SPRING_URL)            # get all the links so we iter thru
-# fallLinksDict = ('https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html')
-# springLinksDict = ('https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/spring-2025/CS.html')
+        PARAMETER: the link to specific subject.  i.e. 'https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html'
+        RETURN: map of {str:Course -> str:Prereqs} .   i.e.  'CS141': 'CS111' ...
+    '''
+    rv_prereqs = {}
+    response = requests.get(SUBJECT_URL)
+    if response.status_code == 200:
+        # continue with scraping
+        soup = BeautifulSoup(response.content, 'html.parser')
+        courses = soup.find_all('div', class_='row course')
+        for course in courses:
+            course_name = course.find('h2').text.replace(' ', '___')
 
-for link in fallLinksDict:                                      # for every link we have to scrape indiv info
-    avaliableCourses = getAllCourses(fallLinksDict[link])
-    for course in avaliableCourses:
-        FALLsemesterAvaliability.append(course)
-dir = './dataCH/'
-getAllSubjectCourses(dir, FALLsemesterAvaliability, 'fall')
-
-fall = time.time()
-print(f'fall: {fall-start}')
-
-
-for link in springLinksDict:                                      # for every link we have to scrape indiv info
-    avaliableCourses = getAllCourses(springLinksDict[link])
-    for course in avaliableCourses:
-        SPRINGsemesterAvaliability.append(course)
-dir = './dataCH/'
-getAllSubjectCourses(dir, SPRINGsemesterAvaliability, 'spring')
-
-spring = time.time()
-print(f'spring: {spring-start}')
+            course_description = course.find('p').text
+            # print(course_description)
+            if 'Prerequisite(s):' in course_description:
+                pre = course_description.split('Prerequisite(s):')[1]
+                print(course_name,'\n' ,pre.split(), '\n')
 
 
-# avaliableCourses = getAllCourses(fallLinksDict)
-# for course in avaliableCourses:
-#     FALLsemesterAvaliability.append(course)
-# print('Fall\n',FALLsemesterAvaliability)
+# '''######'''
+# FALLsemesterAvaliability = []
+# SPRINGsemesterAvaliability = []
+
+# fallLinksDict = scrapeStaticFrontPage(BASE_FALL_URL)            # get all the links so we iter thru
+# springLinksDict = scrapeStaticFrontPage(BASE_SPRING_URL)            # get all the links so we iter thru
+# # fallLinksDict = ('https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html')
+# # springLinksDict = ('https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/spring-2025/CS.html')
+
+# for link in fallLinksDict:                                      # for every link we have to scrape indiv info
+#     avaliableCourses = getAllCourses(fallLinksDict[link])
+#     for course in avaliableCourses:
+#         FALLsemesterAvaliability.append(course)
 # dir = './dataCH/'
 # getAllSubjectCourses(dir, FALLsemesterAvaliability, 'fall')
 
-# avaliableCourses = getAllCourses(springLinksDict)
-# for course in avaliableCourses:
-#     SPRINGsemesterAvaliability.append(course)
-# print('\nSpring\n', SPRINGsemesterAvaliability)
+# fall = time.time()
+# print(f'fall: {fall-start}')
 
-# dir = './dataCH/'
-# getAllSubjectCourses(dir, SPRINGsemesterAvaliability, 'spring')
 
 # for link in springLinksDict:                                      # for every link we have to scrape indiv info
 #     avaliableCourses = getAllCourses(springLinksDict[link])
 #     for course in avaliableCourses:
 #         SPRINGsemesterAvaliability.append(course)
+# dir = './dataCH/'
+# getAllSubjectCourses(dir, SPRINGsemesterAvaliability, 'spring')
+
+# spring = time.time()
+# print(f'spring: {spring-start}')
+# '''######'''
 
 
-end = time.time()
-print(end-start)
+# end = time.time()
+# print(end-start)
+
+
+
+if __name__ == "__main__":
+    fallLinksDict = ('https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html')
+    getPrerequisites(fallLinksDict)
