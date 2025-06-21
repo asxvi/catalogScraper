@@ -23,13 +23,13 @@ def clearTxt(directory):
 def getAllSubjectCourses(directory:str, avaliableCourses:list, semester:str):
     if semester.lower() == 'fall' or semester.lower() == 'spring':
         for file in sorted(os.listdir(directory)):                      # sort directory alphabetically like it shows in actual dir
+                if file == '.DS_Store':
+                    continue
+
                 fullPath = f'{directory}{file}'
-                
                 # read file in, and compare if every course is in avaliableCourses for current semester
-                # try:
                 with open(fullPath, 'r', encoding='utf-8') as openedFile:
                     lines = openedFile.readlines()
-                # except:
                 
                 updatedLines = []           # stores all non updated and updated strings in format: 'CS___101\t1\t0'
                 for i, line in enumerate(lines):
@@ -38,8 +38,6 @@ def getAllSubjectCourses(directory:str, avaliableCourses:list, semester:str):
                         parts[1] = '1'
                     elif parts and parts[0] in avaliableCourses and semester.lower() == 'spring':
                         parts[2] = '1' 
-                    else:
-                        print(semester)
                     updatedLines.append('\t'.join(parts) + '\n')
         
                 # cant easily update file in place, so have to write over existing information... ig thats the best way shrug
