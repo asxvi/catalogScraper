@@ -1,0 +1,19 @@
+# macOS system files
+.DS_Store
+
+# virtual env
+.venv/
+__pycache__/
+
+# data  files/directories 
+data*
+# data/
+# dataCH/
+
+# IDE file
+.vscode/
+
+# logging files
+*.log
+*.tmp
+*.bak
