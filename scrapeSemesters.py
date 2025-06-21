@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+import string
 from directoryFunctions import getAllSubjectCourses
 
 import time
@@ -79,14 +80,28 @@ def getPrerequisites(SUBJECT_URL):
         # continue with scraping
         soup = BeautifulSoup(response.content, 'html.parser')
         courses = soup.find_all('div', class_='row course')
+        translator = str.maketrans('', '', string.punctuation)              # https://stackoverflow.com/questions/265960/best-way-to-strip-punctuation-from-a-string
+
         for course in courses:
             course_name = course.find('h2').text.replace(' ', '___')
-
             course_description = course.find('p').text
-            # print(course_description)
+
             if 'Prerequisite(s):' in course_description:
                 pre = course_description.split('Prerequisite(s):')[1]
-                print(course_name,'\n' ,pre.split(), '\n')
+
+                # https://www.geeksforgeeks.org/python/python-remove-punctuation-from-string/#
+                clean_text = pre.translate(translator)
+                
+                print(course_name,'\n' ,clean_text.split(), '\n')               # NOTE remove after debugging
+
+                # crazy how python literally has everythign built in lol 
+                # https://www.w3schools.com/python/ref_string_isnumeric.asp
+                prev = 0
+                for i, slice in enumerate(clean_text.split()):    
+                    if slice.isnumeric():
+                        print("___".join([clean_text.split()[i-1], slice]))
+                        if 'concurrent' in clean_text.split()[prev:i]:
+                            print('yoyo')
 
 
 # '''######'''
