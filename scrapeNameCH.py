@@ -169,12 +169,6 @@ def getCourseNames(URL_subject):
     else:
         print(f'BAD response: {response.status_code}')
 
-# def writeToFile(filename:str):
-#   pass
-
-
-
-
 
 data = scrapeFrontPage()
 

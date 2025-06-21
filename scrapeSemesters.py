@@ -3,6 +3,9 @@ import requests
 import re
 from directoryFunctions import getAllSubjectCourses
 
+import time
+
+start = time.time()
 
 # all semesters-  use this to update the 2 links below
 # https://webcs7.osss.uic.edu/schedule-of-classes/static/index.php
@@ -62,46 +65,57 @@ def getAllCourses(SUBJECT_URL):
     
     return coursesInSemester
 
-# # all of the primary links to specific course info
-# fallLinksDict = scrapeStaticFrontPage(BASE_FALL_URL)
-# springLinksDict = scrapeStaticFrontPage(BASE_SPRING_URL)
-
-# # fcs = (fallLinks['CS'])
-# # scs = (fallLinks['CS'])
-
-# # fall = getAllCourses(fallLinks)
-# for link in fallLinksDict:
-#     print(getAllCourses(fallLinksDict[link]))
-#     break
-# # spring = getAllCourses(scs)
-
 
 FALLsemesterAvaliability = []
 SPRINGsemesterAvaliability = []
 
 # fallLinksDict = scrapeStaticFrontPage(BASE_FALL_URL)            # get all the links so we iter thru
 # springLinksDict = scrapeStaticFrontPage(BASE_SPRING_URL)            # get all the links so we iter thru
-
-
 fallLinksDict = ('https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html')
+# springLinksDict = ('https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/spring-2025/CS.html')
 
 # for link in fallLinksDict:                                      # for every link we have to scrape indiv info
-#     # abbrev = (getAllCourses(fallLinksDict[link])[0].split('_')[0])  # get part before number ex: CS    
 #     avaliableCourses = getAllCourses(fallLinksDict[link])
 #     for course in avaliableCourses:
 #         FALLsemesterAvaliability.append(course)
-#     break
+# dir = './dataCH/'
+# getAllSubjectCourses(dir, FALLsemesterAvaliability, 'fall')
 
-avaliableCourses = getAllCourses(fallLinksDict)
-for course in avaliableCourses:
-    FALLsemesterAvaliability.append(course)
-print(FALLsemesterAvaliability)
+# fall = time.time()
+# print(f'fall: {fall-start}')
 
 
 # for link in springLinksDict:                                      # for every link we have to scrape indiv info
 #     avaliableCourses = getAllCourses(springLinksDict[link])
 #     for course in avaliableCourses:
 #         SPRINGsemesterAvaliability.append(course)
+# dir = './dataCH/'
+# getAllSubjectCourses(dir, SPRINGsemesterAvaliability, 'spring')
 
+# spring = time.time()
+# print(f'spring: {spring-start}')
+
+
+avaliableCourses = getAllCourses(fallLinksDict)
+for course in avaliableCourses:
+    FALLsemesterAvaliability.append(course)
+print('Fall\n',FALLsemesterAvaliability)
 dir = './dataCH/'
-getAllSubjectCourses(dir, FALLsemesterAvaliability)
+getAllSubjectCourses(dir, FALLsemesterAvaliability, 'fall')
+
+# avaliableCourses = getAllCourses(springLinksDict)
+# for course in avaliableCourses:
+#     SPRINGsemesterAvaliability.append(course)
+# print('\nSpring\n', SPRINGsemesterAvaliability)
+
+# dir = './dataCH/'
+# getAllSubjectCourses(dir, SPRINGsemesterAvaliability, 'spring')
+
+# for link in springLinksDict:                                      # for every link we have to scrape indiv info
+#     avaliableCourses = getAllCourses(springLinksDict[link])
+#     for course in avaliableCourses:
+#         SPRINGsemesterAvaliability.append(course)
+
+
+end = time.time()
+print(end-start)
