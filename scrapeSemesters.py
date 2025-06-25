@@ -1,12 +1,21 @@
 from bs4 import BeautifulSoup
 import requests
-import re
 import string
 from directoryFunctions import getAllSubjectCourses
 
 import time
 
 start = time.time()
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (...) Chrome/123.0.0.0 Safari/537.36",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Connection": "keep-alive",
+    "Referer": "https://www.google.com/"
+}
+
 
 # all semesters-  use this to update the 2 links below
 # https://webcs7.osss.uic.edu/schedule-of-classes/static/index.php
@@ -25,6 +34,7 @@ def scrapeStaticFrontPage(BASE_URL):
         PARAMETER: the link to semester specific page.  i.e. BASE_SPRING_URL = 'https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/spring-2025/'
         RETURN key-value store in form: {Course Abbreviation: url to specific course info}
     '''
+
     response = requests.get(BASE_URL)
     major_links_dict = {}
     if response.status_code == 200:
@@ -63,7 +73,8 @@ def getAllCourses(SUBJECT_URL):
             course_name = course.find('h2').text
             # course_name.replace(' ', '___')
             coursesInSemester.append(course_name.replace(' ', '___'))
-    
+    else:
+        print(f'BAD response: {response.status_code}')
     return coursesInSemester
 
 
@@ -75,7 +86,7 @@ def getPrerequisites(SUBJECT_URL):
         RETURN: map of {str:Course -> str:Prereqs} .   i.e.  'CS141': 'CS111' ...
     '''
     rv_prereqs = {}
-    response = requests.get(SUBJECT_URL)
+    response = requests.get(SUBJECT_URL, headers)
     if response.status_code == 200:
         # continue with scraping
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -87,22 +98,36 @@ def getPrerequisites(SUBJECT_URL):
             course_description = course.find('p').text
 
             if 'Prerequisite(s):' in course_description:
-                pre = course_description.split('Prerequisite(s):')[1]
+                print(course_description)
+                # pre = course_description.split('Prerequisite(s):')[1]
 
-                # https://www.geeksforgeeks.org/python/python-remove-punctuation-from-string/#
-                clean_text = pre.translate(translator)
+
+                # pattern = re.compile("\b([A-Z]{2,4})\s?(\d{2,3})\b")
+
+                # pattern.findall()
+
                 
-                print(course_name,'\n' ,clean_text.split(), '\n')               # NOTE remove after debugging
+                ##########################################################################################
+                # # https://www.geeksforgeeks.org/python/python-remove-punctuation-from-string/#
+                # clean_text = pre.translate(translator)
+                
+                # print(course_name,'\n' ,clean_text.split(), '\n')               # NOTE remove after debugging
 
-                # crazy how python literally has everythign built in lol 
-                # https://www.w3schools.com/python/ref_string_isnumeric.asp
-                prev = 0
-                for i, slice in enumerate(clean_text.split()):    
-                    if slice.isnumeric():
-                        print("___".join([clean_text.split()[i-1], slice]))
-                        if 'concurrent' in clean_text.split()[prev:i]:
-                            print('yoyo')
+                # # crazy how python literally has everythign built in lol 
+                # # https://www.w3schools.com/python/ref_string_isnumeric.asp
+                # prev = 0
+                # for i, slice in enumerate(clean_text.split()):    
+                #     if slice.isnumeric():
+                #         print("___".join([clean_text.split()[i-1], slice]))
+                #         if 'concurrent' in clean_text.split()[prev:i]:
+                #             print('yoyo')
 
+                #             '''
+                #                 left off here last night. it works if i do this, but i gotta update the prev pointer each time that we find an actual value
+                #             '''
+                ##########################################################################################
+    else:
+        print(f'BAD response: {response.status_code}')
 
 # '''######'''
 # FALLsemesterAvaliability = []
@@ -136,11 +161,39 @@ def getPrerequisites(SUBJECT_URL):
 # '''######'''
 
 
-# end = time.time()
-# print(end-start)
 
+def getPrerequisitesLocal(SUBJECT_URL):
+    '''
+        main function that might call helper to parse out all of the prerequisites for SUBJECT_URL in chosen semester
+
+        PARAMETER: the link to specific subject.  i.e. 'https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html'
+        RETURN: map of {str:Course -> str:Prereqs} .   i.e.  'CS141': 'CS111' ...
+    '''
+    rv_prereqs = {}
+    response = requests.get(SUBJECT_URL, headers)
+    if response.status_code == 200:
+        # continue with scraping
+        soup = BeautifulSoup(response.content, 'html.parser')
+        courses = soup.find_all('div', class_='row course')
+        translator = str.maketrans('', '', string.punctuation)              # https://stackoverflow.com/questions/265960/best-way-to-strip-punctuation-from-a-string
+
+        for course in courses:
+            course_name = course.find('h2').text.replace(' ', '___')
+            course_description = course.find('p').text
+
+            if 'Prerequisite(s):' in course_description:
+                print(course_description)
+                # pre = course_description.split('Prerequisite(s):')[1]
+
+
+                # pattern = re.compile("\b([A-Z]{2,4})\s?(\d{2,3})\b")
+
+                # pattern.findall()
+    else:
+        print(f'BAD response: {response.status_code}')
 
 
 if __name__ == "__main__":
-    fallLinksDict = ('https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html')
+    # fallLinksDict = ('https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html')
+    fallLinksDict = 'file:///Users/asxvi/Desktop/uic/catalogScraper/Class%20Listings%20Fall%202025%20Semester.html'
     getPrerequisites(fallLinksDict)
