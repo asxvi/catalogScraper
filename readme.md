@@ -1,6 +1,7 @@
 # catalogScraper (need cooler name!)
 
 ## Project Structure 
+```
 ~catalogScraper
 ├── .gitignore: Specifies intentionally untracked files to ignore.tre
 ├── .venv/: Virtual environment for project dependencies (creates a directory with its own Python interpreter and package library, distinct from your system's global Python installatio).
@@ -14,7 +15,7 @@
 ├── scrapePrereq.py Working on this
 ├── scrapeSemesters.py: DONE Scrapes specific website page for specific course and overwrites /dataCH and its files
 ├── scrapeNameCH.py: DONE Scrapes main catalog website, and writes to /data directory. (for now might need to make '/data' and '/dataCH' directory prior to running)
-
+```
 
 
   ## Setup
