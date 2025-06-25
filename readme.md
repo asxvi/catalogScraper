@@ -1,16 +1,22 @@
 # catalogScraper (need cooler name!)
 
-## Project Structure
+## Project Structure 
 ~catalogScraper
-  ├── .gitignore: Specifies intentionally untracked files to ignore.
-  ├── .venv/: Virtual environment for project dependencies (creates a directory with its own Python interpreter and package library, distinct from your system's global Python installatio).
-  ├── requirements.txt: List of dependencies to install using pip.
-  ├── scrapeNameCH.py: DONE Scrapes main catalog website, and writes to /data directory. (for now might need to make '/data' and '/dataCH' directory prior to running)
-  ├── scrapeSemesters.py: DONE Scrapes specific website page for specific course and overwrites /dataCH and its files
-  ├── scrapePrereq.py: CODING Scrapes prereq info, but needs to use Selenium and headless browser bc getting blocked by admin
-  ├── main.py: IGNORE for now. Main script that will call other 3 .py files
-  ├── headlessScrape.py IGNORE Scrapes prereq info, but needs to use Selenium and headless browser bc getting blocked by admin
-  
+├── .gitignore: Specifies intentionally untracked files to ignore.tre
+├── .venv/: Virtual environment for project dependencies (creates a directory with its own Python interpreter and package library, distinct from your system's global Python installatio).
+├── data/: stores data about every course and number of credits it can be 
+├── dataCH/: stores data about the semester a course is avaliable in
+├── directoryFunctions.py: file to clearing the data/ and dataCH/ directories as well as other dir utilities
+├── examples/: personal files for reference 
+├── headlessScrape.py: IGNORE
+├── main.py: IGNORE
+├── requirements.txt: List of dependencies to install using pip.
+├── scrapePrereq.py Working on this
+├── scrapeSemesters.py: DONE Scrapes specific website page for specific course and overwrites /dataCH and its files
+├── scrapeNameCH.py: DONE Scrapes main catalog website, and writes to /data directory. (for now might need to make '/data' and '/dataCH' directory prior to running)
+
+
+
   ## Setup
 * Ensure Python 3.x is installed.
 * Clone repo to local machine.

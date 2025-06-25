@@ -1,0 +1,13 @@
+.
+├── __pycache__
+├── data
+├── dataCH
+├── directoryFunctions.py
+├── examples
+├── headlessScrape.py
+├── main.py
+├── readme.md
+├── requirements.txt
+├── scrapeNameCH.py
+├── scrapePrereq.py
+├── scrapeSemesters.py
