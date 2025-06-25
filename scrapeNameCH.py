@@ -3,6 +3,7 @@ import requests
 import re
 
 
+# use the static page vs catalog page just to limit number URLs program needs to update
 BASE_URL = 'https://catalog.uic.edu/' #parent website used for building url
 UIC_URL = 'https://catalog.uic.edu/all-course-descriptions/'
 
@@ -12,8 +13,11 @@ def convHoursStrToRange(hours_str):
         Hours come out strange compared to the desired output, so we have to manually parse them
         based on the 3 possibilities for credit hours: 'n' credits, 'n-m' credits, 'n or m' credits    
         
-        PARAM: the string to parse/ reformat into a range 
-        RETURN: tuple of range: (smaller_num_possible_credits, larger_num_possible_credits)
+        Parameters: 
+            hours_str (str): the string to parse/reformat into a range 
+
+        Returns: 
+            (first_num, second_num) (tuple): A range of possible credits(smaller_num_possible_credits, larger_num_possible_credits)
     '''
 
     # remove the words hour or hours and remove all extra white space
@@ -40,9 +44,12 @@ def convHourRangeToList(hours_str):
         Call convHoursStrToRange helper function and return a string of the entire 
         range of credit hours for the course. 
         
-        PARAM: the string to parse/ reformat into a range using convHoursStrToRange
-        RETURN: a string of all possible credit hours. Ex: "3,4,5...", or just '3' ...
-        Note: Have to convert from int to str a few times within this entire process
+        Parameters: 
+            hours_str (str): the string to parse/ reformat into a range using convHoursStrToRange 
+        Returns: 
+            (str): a string of all possible credit hours. Ex: "3,4,5...", or just '3' ...
+        Note: 
+            Have to convert from int to str a few times within this entire process
     '''
 
     first_num, second_num = convHoursStrToRange(hours_str)
@@ -62,31 +69,36 @@ def convHourRangeToList(hours_str):
     else:
         rv = list(range(first_num, second_num + 1))
 
+    # map applies a function: str() to every value in rv
     return(','.join(map(str, rv)))
 
 
-def scrapeFrontPage(URL):
+def scrapeCatalogFrontPage(URL):
     '''
-
+        Scrape https://catalog.uic.edu/all-course-descriptions/ for every subject 
+        and link to specific subject page
+        
+        Parameters:
+            URL (str): string to UIC catalog URL. https://catalog.uic.edu/all-course-descriptions/
+        Returns:
+            major_links_dict (str: str): key is Subject and value is link to more subject info 
+            ex: (CS: https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html)
+        Debugging: 
+            visit /dubugging
+            Errors may stem from lines that contain '.find()' or '.find_all'
     '''
     major_links_dict = {}
     
-    response = requests.get(UIC_URL)
+    response = requests.get(URL)
     if response.status_code == 200:
-        # continue with scraping
         soup = BeautifulSoup(response.content, 'html.parser')
         
-        # target the sitemap in main body and not the left menu
+        # target the sitemap in main body and not the left menu. May change with time
         siteMap = soup.find('div', class_='sitemap')
         allMajors = siteMap.find_all('a', class_='sitemaplink')
-
-        # debugging, store as list and kv store
-        major_links_list = []
-        
+    
         for major in allMajors:
-            major_links_list.append(BASE_URL + major['href'])
             major_links_dict[major.text] = (BASE_URL + major['href'])
-
     else:
         print(f'BAD response: {response.status_code}')
 
@@ -94,10 +106,21 @@ def scrapeFrontPage(URL):
 
 
 def scrapeSubject(URL_subject):
+    '''
+        Scrape specific subject and call getMasterCourseList helper function 
+        to create files inside /data. 
+
+        Parameters:
+            URL_subject (str): string to specific UIC subject URL. https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html
+        Returns:
+            None:
+        Debugging: 
+            visit /dubugging
+            Errors may stem from lines that contain '.find()' or '.find_all'
+    '''
     response = requests.get(URL_subject)
 
     if response.status_code == 200:
-        # continue with scraping
         soup = BeautifulSoup(response.content, 'html.parser')
         courseBlock = soup.find('div', class_="sc_sccoursedescs")
         allCourses = courseBlock.find_all('div', class_='courseblock')
@@ -186,7 +209,7 @@ def getCourseNames(URL_subject):
         print(f'BAD response: {response.status_code}')
 
 
-data = scrapeFrontPage(UIC_URL)
+data = scrapeCatalogFrontPage(UIC_URL)
 
 # csLink = data['Computer Science (CS)']   #testing data point
 # scrapeSubject(csLink)
