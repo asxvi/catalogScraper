@@ -38,7 +38,9 @@ def getPrerequisites(SUBJECT_URL):
     if response.status_code == 200:
         # continue with scraping
         soup = BeautifulSoup(response.content, 'html.parser')
-        courses = soup.find_all('div', class_='row course')
+        print(soup)
+        courses = soup.find_all('div', class_='col')
+        print(courses)
         translator = str.maketrans('', '', string.punctuation)              # https://stackoverflow.com/questions/265960/best-way-to-strip-punctuation-from-a-string
 
         for course in courses:
@@ -52,14 +54,15 @@ def getPrerequisites(SUBJECT_URL):
 
                 pattern = re.compile("\b([A-Z]{2,4})\s?(\d{2,3})\b")
 
-                pattern.findall()
+                # pattern.findall()
+
 
                 
                 ##########################################################################################
                 # # https://www.geeksforgeeks.org/python/python-remove-punctuation-from-string/#
-                # clean_text = pre.translate(translator)
+                clean_text = pre.translate(translator)
                 
-                # print(course_name,'\n' ,clean_text.split(), '\n')               # NOTE remove after debugging
+                print(course_name,'\n' ,clean_text.split(), '\n')               # NOTE remove after debugging
 
                 # # crazy how python literally has everythign built in lol 
                 # # https://www.w3schools.com/python/ref_string_isnumeric.asp
