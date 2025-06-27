@@ -1,14 +1,9 @@
-'''
-    Basic usage: From main, scrape front page using scrapeCatalogFrontPage(). Then iterate through each specific subject key-value
-    and scrapeSubject(), which calls helper getMasterCourseList()
-
-
-'''
-
-
 from bs4 import BeautifulSoup
 import requests
 import re
+from typing import List, Optional
+import timeit
+import os
 
 '''
     move urls to main program
@@ -25,7 +20,6 @@ def convHoursStrToRange(hours_str):
         
         Parameters: 
             hours_str (str): the string to parse/reformat into a range 
-
         Returns: 
             (first_num, second_num) (tuple): A range of possible credits(smaller_num_possible_credits, larger_num_possible_credits)
     '''
@@ -49,15 +43,15 @@ def convHoursStrToRange(hours_str):
     return (first_num, second_num)
 
 
-def convHourRangeToList(hours_str):
+def convHourRangeToList(hours_str: str) -> str:
     '''
         Call convHoursStrToRange helper function and return a string of the entire 
         range of credit hours for the course. 
-        
+
         Parameters: 
             hours_str (str): the string to parse/ reformat into a range using convHoursStrToRange 
         Returns: 
-            (str): a string of all possible credit hours. Ex: "3,4,5...", or just '3' ...
+            (str): a string of all possible credit hours. Ex: "3,4,5...", or just '3'...
         Note: 
             Have to convert from int to str a few times within this entire process
     '''
@@ -83,7 +77,7 @@ def convHourRangeToList(hours_str):
     return(','.join(map(str, rv)))
 
 
-def scrapeCatalogFrontPage(URL):
+def scrapeCatalogFrontPage(URL: str) -> dict:
     '''
         Scrape https://catalog.uic.edu/all-course-descriptions/ for every subject 
         and link to specific subject page
@@ -115,15 +109,15 @@ def scrapeCatalogFrontPage(URL):
     return major_links_dict
 
 
-def scrapeSubject(URL_subject):
+def writeCourseInfoToFileStream(URL_subject: str) -> None:
     '''
-        Scrape specific subject and call getMasterCourseList helper function 
-        to create files inside /{path_to_folder_with_credit_hours}. 
+        Scrape specific subject and call helper function to create files inside /{path_to_folder_with_credit_hours}. 
 
         Parameters:
-            URL_subject (str): string to specific UIC subject URL. https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html
+            URL_subject (str): string to specific UIC subject URL. ex: https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html
         Returns:
             None:
+            helper function creates files inside /{path_to_folder_with_credit_hours}. 
         Debugging: 
             visit /dubugging
             Errors may stem from lines that contain '.find()' or '.find_all'
@@ -135,22 +129,27 @@ def scrapeSubject(URL_subject):
         courseBlock = soup.find('div', class_="sc_sccoursedescs")
         allCourses = courseBlock.find_all('div', class_='courseblock')
 
-        # helper function to go thru every 
-        getMasterCourseList(allCourses)              
+        # helper function to go thru every course in curr subject
+        coursePatternMatchStream(allCourses)              
 
     else:
         print(f'BAD response: {response.status_code}')
     
-# scrape webpage and return a txt file 
-def getMasterCourseList(allCourses):
+
+def coursePatternMatchStream(allCourses: str) -> None:
     '''
         Parameters:
-            allCourses ():    
-    
+            allCourses (str): a DOM-like that contains HTML map that we parse
+        Returns:
+            None:
+            Create files in directory, but no rv
         Debugging: 
             visit /dubugging
             Errors may stem from lines that contain '.find()' or '.find_all'
     '''
+
+    credit_hours_folderName = 'CHdataStream/'
+    semester_offerings_folderName = 'offeringsDataStream/'
 
     pattern = re.compile(r"""
         ^([A-Z]+)\s+(\d+)\.                                     # subject and course number ex: 'CS 100.'
@@ -163,70 +162,150 @@ def getMasterCourseList(allCourses):
         match = pattern.match(course_title_hours)
         
         if match:
-            subject = match.group(1)
-            number = match.group(2)
+            course_subject = match.group(1)
+            course_number = match.group(2)
             course_title = match.group(3).strip()
             course_hours = match.group(4).strip()
             
-            course_num = f"{subject}___{number}"  # delimit with whatever, this follows example 6/16/25
-            
-            # debugging
-            # print(f"Code: {course_num}, Title: {course_title}, Hours: {course_hours}")
+            course_num = f"{course_subject}___{course_number}"  # delimit with whatever, this follows example 6/16/25
             course_hours = (convHourRangeToList(course_hours))
+            course_subject = "".join(char for char in course_num if char.isalpha())
             
-            subject = "".join(char for char in course_num if char.isalpha())
+            # print(f"Code: {course_num}, Title: {course_title}, Hours: {course_hours}")            # debugging
+
+            if not os.path.isdir(f'data/{credit_hours_folderName}'):
+                os.makedirs(f'data/{credit_hours_folderName}')
+            if not os.path.isdir(f'data/{semester_offerings_folderName}'):
+                os.makedirs(f'data/{semester_offerings_folderName}')
+            
             # write to 2 different files. this should reduce the runtime by a little
-            with open(f"data2/mastercourselist_{subject}.txt", 'a') as file:
+
+            with open(f"data/{credit_hours_folderName}_{course_subject}.txt", 'a') as file:
                 file.write(f"{course_num}\t{course_hours}\n")
-            with open(f"dataCH/courseofferings_{subject}.txt", 'a') as file:
+            with open(f"data/{semester_offerings_folderName}_{course_subject}.txt", 'a') as file:
                 file.write(f"{course_num}\t0\t0\n")
         else:
-            print(f"Error writiting to {subject}")
+            print(f"Error writiting to {course_subject}")
             print(course_title_hours)
-            print(match)
 
-# # scrape webpage and return a txt file 
-# # this function needs to be called for each subject. must be inside for loop with 
-# # input being the url for the current subject. returns array of just course names
-# def getCourseNames(URL_subject):
-#     response = requests.get(URL_subject)
 
-#     if response.status_code == 200:
-#         # continue with scraping
-#         soup = BeautifulSoup(response.content, 'html.parser')
-#         courseBlock = soup.find('div', class_="sc_sccoursedescs")
-#         allCourses = courseBlock.find_all('div', class_='courseblock')
+def writeCourseInfoToFileBatch(URL_subject: str) -> None:
+    '''
+        calls pattern match helper function for every course. write to file all subjects and credit hours
+        
+        Parameters:
+            URL_subject (str): Current subject to scrape all courses for
+        Returns:
+            None: 
+            write to file for current subject
+        Debugging: 
+            visit /dubugging
+            Errors may stem from lines that contain '.find()' or '.find_all'
+    '''
 
-#         rv = []
+    credit_hours_folderName = 'CHdataBatch/'
+    semester_offerings_folderName = 'offeringsDataBatch/'
 
-#         pattern = re.compile(r"""
-#             ^([A-Z]+)\s+(\d+)\.              #subject and course number ex: 'CS 100.'
-#             \s+(.+?[.?!])                       # course title, non-greedy up to next period
-#             # \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hour)\.?$  # Hour: 3, 1-3, or '3 or 4'                         
-#             \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hours?)\.?$  # Hours: 3, 1-3, or '3 or 4'
-#         """, re.VERBOSE)
+    response = requests.get(URL_subject)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        courseBlock = soup.find('div', class_="sc_sccoursedescs")
+        allCourses = courseBlock.find_all('div', class_='courseblock')
 
-#         for course in allCourses:
-#             course_title_hours = (course.find('p', class_='courseblocktitle').text)
-#             match = pattern.match(course_title_hours)
+        # helper function to go thru every course in curr subject
+        writeOnce = ["", ""]        # stores strings to batch insert into 2 files
+        for course in allCourses:
+            course_title_hours = (course.find('p', class_='courseblocktitle').text)
+            course_subject = coursePatternMatchBatch(course_title_hours, writeOnce)
+
+            if not os.path.isdir(f'data/{credit_hours_folderName}'):
+                os.makedirs(f'data/{credit_hours_folderName}')
+            if not os.path.isdir(f'data/{semester_offerings_folderName}'):
+                os.makedirs(f'data/{semester_offerings_folderName}')
+
+        # batch write to 2 files. 1 write per each file, for each subject. 
+        # Should be 2 * numSubject writes in this step alone vs 3000+ indiv writes if write for each course
+        with open(f"data/{credit_hours_folderName}mastercourselist_{course_subject}.txt", 'w') as file:
+            file.write(writeOnce[0])
+        with open(f"data/{semester_offerings_folderName}courseofferings_{course_subject}.txt", 'w') as file:
+            file.write(writeOnce[1])
+
+    else:
+        print(f'BAD response: {response.status_code}')
+    
+    
+def coursePatternMatchBatch(course_title_hours: str, writeOnce: List) -> str:
+    '''
+        Attempt* to batch write into file rather than independently write many more times.
+        Regex match input string for current course, append polished output into List parameter.
+
+        Parameters:
+            course_title_hours (str): contains raw string of courseNum, title, and credit hours.        ex: CS 111.  Program Design I.  3 hours.
+            writeOnce (List[str, str]): contains raw strings that we append to at end of function. These strings get batch written to files.
+        Returns:
+            course_subject (str): Prefix of the courseID. ex: CS, MATH...
+    '''
+
+    pattern = re.compile(r"""
+        ^([A-Z]+)\s+(\d+)\.                                     # subject and course number ex: 'CS 100.'
+        \s+(.+?[.?!])                                           # course title, non-greedy up to next period
+        \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hours?)\.?$        # hour(s): 3, 1-3, or '3 or 4'
+    """, re.VERBOSE)
+
+    match = pattern.match(course_title_hours)
+    
+    if match:
+        course_subject = match.group(1)
+        course_number = match.group(2)
+        course_title = match.group(3).strip()
+        course_hours = match.group(4).strip()
+        
+        course_num = f"{course_subject}___{course_number}"                                          # chose delimiter
+        course_hours = (convHourRangeToList(course_hours))
+        course_subject = "".join(char for char in course_num if char.isalpha())
+        # print(f"Course: {course_num}, Subject: {course_subject}, Hours: {course_hours}")            # for debugging
+
+        # save everything to string buffer in list and only write once to each  .txt file rather than numCourses times
+        writeOnce[0] += (f"{course_num}\t{course_hours}\n")
+        writeOnce[1] += (f"{course_num}\t0\t0\n")
             
-#             if match:
-#                 subject = match.group(1)
-#                 number = match.group(2)            
-#                 course_num = f"{subject} {number}"  # delimit with whatever, this follows example 6/16/25
-                
-#                 rv.append(course_num)
-                
-#             else:
-#                 print(course_title_hours)
-#                 print(match)
-#         return rv
-
-#     else:
-#         print(f'BAD response: {response.status_code}')
+        return course_subject
+    else:
+        print(f"Error writiting to {course_subject}")
+        print(match)
+        return ''
 
 
 data = scrapeCatalogFrontPage(UIC_URL)
-# csLink = data['Computer Science (CS)']; scrapeSubject(csLink)               # testing data point
-for d in data:
-    scrapeSubject(data[d])
+
+def benchmarkIngest():
+    scrapeCatalogFrontPage(UIC_URL)
+
+def benchmarkBatchSingle():
+    csLink = data['Computer Science (CS)']
+    writeCourseInfoToFileBatch(csLink)               # testing data point
+
+def benchmarkBatchALL():
+    for d in data:
+        writeCourseInfoToFileBatch(data[d])
+
+def benchmarkStreamSingle():
+    csLink = data['Computer Science (CS)']
+    writeCourseInfoToFileStream(csLink)               # testing data point
+
+def benchmarkStreamALL():
+    for d in data:
+        writeCourseInfoToFileStream(data[d])
+
+
+if __name__ == "__main__":
+    # data = scrapeCatalogFrontPage(UIC_URL)
+    # csLink = data['Computer Science (CS)']; writeCourseInfoToFileBatch(csLink)               # testing data point
+    # for d in data:
+    #     scrapeSubject(data[d])
+
+    print(f'Single Stream: {timeit.timeit(benchmarkStreamSingle, number=1)}')
+    print(f'ALL Stream: {timeit.timeit(benchmarkStreamALL, number=1)}')
+
+    print(f'Single Batch: {timeit.timeit(benchmarkBatchSingle, number=1)}')
+    print(f'ALL Batch: {timeit.timeit(benchmarkBatchALL, number=1)}')

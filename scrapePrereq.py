@@ -10,7 +10,7 @@ def getPrerequisites(SUBJECT_URL):
         main function that might call helper to parse out all of the prerequisites for SUBJECT_URL in chosen semester
 
         PARAMETER: the link to specific subject.  i.e. 'https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html'
-        RETURN: map of {str:Course -> str:Prereqs} .   i.e.  'CS141': 'CS111' ...
+        RETURN: map of {str:Course -> str:Prereqs} .   i.e.  'CS141': 'CS111' ...¡
     '''
     rv_prereqs = {}
     response = requests.get(SUBJECT_URL)
