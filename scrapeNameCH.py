@@ -1,8 +1,18 @@
+'''
+    Basic usage: From main, scrape front page using scrapeCatalogFrontPage(). Then iterate through each specific subject key-value
+    and scrapeSubject(), which calls helper getMasterCourseList()
+
+
+'''
+
+
 from bs4 import BeautifulSoup
 import requests
 import re
 
-
+'''
+    move urls to main program
+'''
 # use the static page vs catalog page just to limit number URLs program needs to update
 BASE_URL = 'https://catalog.uic.edu/' #parent website used for building url
 UIC_URL = 'https://catalog.uic.edu/all-course-descriptions/'
@@ -108,7 +118,7 @@ def scrapeCatalogFrontPage(URL):
 def scrapeSubject(URL_subject):
     '''
         Scrape specific subject and call getMasterCourseList helper function 
-        to create files inside /data. 
+        to create files inside /{path_to_folder_with_credit_hours}. 
 
         Parameters:
             URL_subject (str): string to specific UIC subject URL. https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html
@@ -125,20 +135,27 @@ def scrapeSubject(URL_subject):
         courseBlock = soup.find('div', class_="sc_sccoursedescs")
         allCourses = courseBlock.find_all('div', class_='courseblock')
 
-        getMasterCourseList(allCourses)
+        # helper function to go thru every 
+        getMasterCourseList(allCourses)              
 
     else:
         print(f'BAD response: {response.status_code}')
     
 # scrape webpage and return a txt file 
 def getMasterCourseList(allCourses):
-    baseFilename = 'mastercourselist'
+    '''
+        Parameters:
+            allCourses ():    
+    
+        Debugging: 
+            visit /dubugging
+            Errors may stem from lines that contain '.find()' or '.find_all'
+    '''
 
     pattern = re.compile(r"""
-        ^([A-Z]+)\s+(\d+)\.              #subject and course number ex: 'CS 100.'
-        \s+(.+?[.?!])                       # course title, non-greedy up to next period
-        # \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hour)\.?$  # Hour: 3, 1-3, or '3 or 4'                         
-        \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hours?)\.?$  # Hours: 3, 1-3, or '3 or 4'
+        ^([A-Z]+)\s+(\d+)\.                                     # subject and course number ex: 'CS 100.'
+        \s+(.+?[.?!])                                           # course title, non-greedy up to next period
+        \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hours?)\.?$        # hour(s): 3, 1-3, or '3 or 4'
     """, re.VERBOSE)
 
     for course in allCourses:
@@ -159,60 +176,57 @@ def getMasterCourseList(allCourses):
             
             subject = "".join(char for char in course_num if char.isalpha())
             # write to 2 different files. this should reduce the runtime by a little
-            # note it seemslike this works 57 runtime for 2 writes
-            with open(f"data/mastercourselist_{subject}.txt", 'a') as file:
+            with open(f"data2/mastercourselist_{subject}.txt", 'a') as file:
                 file.write(f"{course_num}\t{course_hours}\n")
             with open(f"dataCH/courseofferings_{subject}.txt", 'a') as file:
                 file.write(f"{course_num}\t0\t0\n")
         else:
+            print(f"Error writiting to {subject}")
             print(course_title_hours)
             print(match)
 
-# scrape webpage and return a txt file 
-# this function needs to be called for each subject. must be inside for loop with 
-# input being the url for the current subject. returns array of just course names
-def getCourseNames(URL_subject):
-    response = requests.get(URL_subject)
+# # scrape webpage and return a txt file 
+# # this function needs to be called for each subject. must be inside for loop with 
+# # input being the url for the current subject. returns array of just course names
+# def getCourseNames(URL_subject):
+#     response = requests.get(URL_subject)
 
-    if response.status_code == 200:
-        # continue with scraping
-        soup = BeautifulSoup(response.content, 'html.parser')
-        courseBlock = soup.find('div', class_="sc_sccoursedescs")
-        allCourses = courseBlock.find_all('div', class_='courseblock')
+#     if response.status_code == 200:
+#         # continue with scraping
+#         soup = BeautifulSoup(response.content, 'html.parser')
+#         courseBlock = soup.find('div', class_="sc_sccoursedescs")
+#         allCourses = courseBlock.find_all('div', class_='courseblock')
 
-        rv = []
+#         rv = []
 
-        pattern = re.compile(r"""
-            ^([A-Z]+)\s+(\d+)\.              #subject and course number ex: 'CS 100.'
-            \s+(.+?[.?!])                       # course title, non-greedy up to next period
-            # \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hour)\.?$  # Hour: 3, 1-3, or '3 or 4'                         
-            \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hours?)\.?$  # Hours: 3, 1-3, or '3 or 4'
-        """, re.VERBOSE)
+#         pattern = re.compile(r"""
+#             ^([A-Z]+)\s+(\d+)\.              #subject and course number ex: 'CS 100.'
+#             \s+(.+?[.?!])                       # course title, non-greedy up to next period
+#             # \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hour)\.?$  # Hour: 3, 1-3, or '3 or 4'                         
+#             \s+(\d+(?:\s*-\s*\d+|\s+or\s+\d+)?\s*hours?)\.?$  # Hours: 3, 1-3, or '3 or 4'
+#         """, re.VERBOSE)
 
-        for course in allCourses:
-            course_title_hours = (course.find('p', class_='courseblocktitle').text)
-            match = pattern.match(course_title_hours)
+#         for course in allCourses:
+#             course_title_hours = (course.find('p', class_='courseblocktitle').text)
+#             match = pattern.match(course_title_hours)
             
-            if match:
-                subject = match.group(1)
-                number = match.group(2)            
-                course_num = f"{subject} {number}"  # delimit with whatever, this follows example 6/16/25
+#             if match:
+#                 subject = match.group(1)
+#                 number = match.group(2)            
+#                 course_num = f"{subject} {number}"  # delimit with whatever, this follows example 6/16/25
                 
-                rv.append(course_num)
+#                 rv.append(course_num)
                 
-            else:
-                print(course_title_hours)
-                print(match)
-        return rv
+#             else:
+#                 print(course_title_hours)
+#                 print(match)
+#         return rv
 
-    else:
-        print(f'BAD response: {response.status_code}')
+#     else:
+#         print(f'BAD response: {response.status_code}')
 
 
 data = scrapeCatalogFrontPage(UIC_URL)
-
-# csLink = data['Computer Science (CS)']   #testing data point
-# scrapeSubject(csLink)
-
+# csLink = data['Computer Science (CS)']; scrapeSubject(csLink)               # testing data point
 for d in data:
     scrapeSubject(data[d])
