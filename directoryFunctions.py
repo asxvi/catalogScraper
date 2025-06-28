@@ -23,7 +23,7 @@ def clearTxt(directory):
 def getAllSubjectCourses(directory:str, avaliableCourses:list, semester:str):
     if semester.lower() == 'fall' or semester.lower() == 'spring':
         for file in sorted(os.listdir(directory)):                      # sort directory alphabetically like it shows in actual dir
-                if file == '.DS_Store':
+                if file == '.*' or file == '.DS_Store':
                     continue
 
                 fullPath = f'{directory}{file}'

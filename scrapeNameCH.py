@@ -1,19 +1,30 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-from typing import List, Optional
-import timeit
+from typing import List
 import os
 
-'''
-    move urls to main program
-'''
-# use the static page vs catalog page just to limit number URLs program needs to update
-BASE_URL = 'https://catalog.uic.edu/' #parent website used for building url
-UIC_URL = 'https://catalog.uic.edu/all-course-descriptions/'
+def scrapeStage1(UIC_URL: str) -> None:
+    '''
+        Uses helper functions: scrapeCatalogFrontPage(), and writeCourseInfoToFileBatch() to 
+        - Write to CH file all subjects the number of credit hours they take
+        - Write to semester offerings file default values: COURSE 0 0 (for later use)
+
+        Parameters:
+            UIC_URL (str): UIC catalog homepage. Only used in part 1
+        Returns:
+            None: On successful exit. Print to console
+    '''
+
+    data = scrapeCatalogFrontPage(UIC_URL)
+    for subject in data:
+        writeCourseInfoToFileBatch(data[subject])                       # use Batch and not Stream function
+
+    print("Successfully wrote to CHdata and offeringsData")
 
 
-def convHoursStrToRange(hours_str):
+
+def convHoursStrToRange(hours_str: str) -> tuple:
     '''
         Hours come out strange compared to the desired output, so we have to manually parse them
         based on the 3 possibilities for credit hours: 'n' credits, 'n-m' credits, 'n or m' credits    
@@ -90,7 +101,10 @@ def scrapeCatalogFrontPage(URL: str) -> dict:
         Debugging: 
             visit /dubugging
             Errors may stem from lines that contain '.find()' or '.find_all'
+            Erros may stem from Base_URL changing
     '''
+
+    BASE_URL = 'https://catalog.uic.edu/'               # may break if URL changes
     major_links_dict = {}
     
     response = requests.get(URL)
@@ -180,9 +194,9 @@ def coursePatternMatchStream(allCourses: str) -> None:
             
             # write to 2 different files. this should reduce the runtime by a little
 
-            with open(f"data/{credit_hours_folderName}_{course_subject}.txt", 'a') as file:
+            with open(f"data/{credit_hours_folderName}mastercourselist_{course_subject}.txt", 'a') as file:
                 file.write(f"{course_num}\t{course_hours}\n")
-            with open(f"data/{semester_offerings_folderName}_{course_subject}.txt", 'a') as file:
+            with open(f"data/{semester_offerings_folderName}courseofferings_{course_subject}.txt", 'a') as file:
                 file.write(f"{course_num}\t0\t0\n")
         else:
             print(f"Error writiting to {course_subject}")
@@ -222,6 +236,10 @@ def writeCourseInfoToFileBatch(URL_subject: str) -> None:
                 os.makedirs(f'data/{credit_hours_folderName}')
             if not os.path.isdir(f'data/{semester_offerings_folderName}'):
                 os.makedirs(f'data/{semester_offerings_folderName}')
+
+        # Special case of adding the final course for each subject
+        writeOnce[0] += (f"{course_subject}___XXX\t{0}\n")
+        writeOnce[1] += (f"{course_subject}___XXX\t0\t0\n")
 
         # batch write to 2 files. 1 write per each file, for each subject. 
         # Should be 2 * numSubject writes in this step alone vs 3000+ indiv writes if write for each course
@@ -276,8 +294,10 @@ def coursePatternMatchBatch(course_title_hours: str, writeOnce: List) -> str:
         return ''
 
 
-data = scrapeCatalogFrontPage(UIC_URL)
+"""
+import timeit
 
+data = scrapeCatalogFrontPage(UIC_URL)
 def benchmarkIngest():
     scrapeCatalogFrontPage(UIC_URL)
 
@@ -296,16 +316,19 @@ def benchmarkStreamSingle():
 def benchmarkStreamALL():
     for d in data:
         writeCourseInfoToFileStream(data[d])
-
+"""
 
 if __name__ == "__main__":
-    # data = scrapeCatalogFrontPage(UIC_URL)
+    UIC_URL = 'https://catalog.uic.edu/all-course-descriptions/'
+    data = scrapeCatalogFrontPage(UIC_URL)
     # csLink = data['Computer Science (CS)']; writeCourseInfoToFileBatch(csLink)               # testing data point
-    # for d in data:
-    #     scrapeSubject(data[d])
+    for d in data:
+        # writeCourseInfoToFileBatch(data[d])
+        writeCourseInfoToFileStream(data[d])
 
+    '''
     print(f'Single Stream: {timeit.timeit(benchmarkStreamSingle, number=1)}')
     print(f'ALL Stream: {timeit.timeit(benchmarkStreamALL, number=1)}')
-
     print(f'Single Batch: {timeit.timeit(benchmarkBatchSingle, number=1)}')
     print(f'ALL Batch: {timeit.timeit(benchmarkBatchALL, number=1)}')
+    '''

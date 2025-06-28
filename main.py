@@ -1,21 +1,23 @@
-import selenium
-from bs4 import BeautifulSoup
-from scrapeNameCH import scrapeFrontPage, scrapeSubject
-from directoryFunctions import getAllSubjectCourses
+from scrapeNameCH import scrapeStage1
+from scrapeSemesters import scrapeStage2
 
-''' contains URL links to various URL's used in program
-'''
-# [1]
-BASE_URL = 'https://catalog.uic.edu/' #parent website used for building url
-UIC_URL = 'https://catalog.uic.edu/all-course-descriptions/'
+''' contains URL links to various URL's used in program'''
+UIC_URL = 'https://catalog.uic.edu/all-course-descriptions/'                                           # used in stage 1 of scraping
+BASE_FALL_URL = "https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/"          # used in stage 2 of scraping
+BASE_SPRING_URL = "https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/spring-2025/"   
 
 
 
 if __name__ == '__main__':
-    print('running script')
+    print('Running script')
 
-    # these lines create all the files in data
-    data = scrapeFrontPage()
-    for d in data:
-        scrapeSubject(data[d])
+    scrapeStage1(UIC_URL)
+
+    scrapeStage2(BASE_FALL_URL, BASE_SPRING_URL)
+
+
+    
+    
+
+    print('Successful termination')
     
