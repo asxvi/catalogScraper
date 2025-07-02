@@ -6,6 +6,7 @@ import time
 import requests
 import string
 import re
+import os
 
 # options = webdriver.ChromeOptions()
 # # options.add_argument('--headless')  # add/ remove to see browser open
@@ -90,15 +91,15 @@ def getPrerequisites(SUBJECT_URL):
         RETURN: map of {str:Course -> str:Prereqs} .   i.e.  'CS141': 'CS111' ...
     '''
     
-    credit_hours_folderName = 'CHdataStream/'
-    semester_offerings_folderName = 'offeringsDataStream/'
+    credit_hours_folderName = 'prereqDataStream/'
+    semester_offerings_folderName = 'prereqDataStream/'
     
     response = requests.get(SUBJECT_URL)
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
         courses = soup.find_all('div', class_='courseblock')
         
-        rv = []
+        rv = ""
         for course in courses:            
             course_name = course.find('strong').text
             course_num = course_name.split()[0]
@@ -116,17 +117,21 @@ def getPrerequisites(SUBJECT_URL):
                 
                 for c in allNums:
                     if c in prevTaken:
-                        rv.append(f'{c}\t{course_name}\t-1\n')
+                        rv += (f'{c}\t{course_name}\t-1\n')
                     elif c in concurrentTaken:
-                        rv.append(f'{c}\t{course_name}\t0\n')
+                        rv += (f'{c}\t{course_name}\t0\n')
                     else:
-                        rv.append(f'{c}\t{course_name}\t-1\n')
+                        rv += (f'{c}\t{course_name}\t-1\n')
         
+        if not os.path.isdir(f'data/{credit_hours_folderName}'):
+            os.makedirs(f'data/{credit_hours_folderName}')
+        if not os.path.isdir(f'data/{semester_offerings_folderName}'):      # can i move this outside the for loop
+            os.makedirs(f'data/{semester_offerings_folderName}')
+
         with open(f"data/{credit_hours_folderName}prerequisites{course_num}.txt", 'w') as file:
-            for v in enumerate(rv):
-                file.write(v)
+            file.write(rv)
     else:
         print(f'BAD response: {response.status_code}')
 
 if __name__ == "__main__":
-    getPrerequisites('https://catalog.uic.edu/all-course-descriptions/cs/')
+    getPrerequisites('https://catalog.uic.edu/all-course-descriptions/chem/')
