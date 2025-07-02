@@ -42,7 +42,7 @@ def scrapeStage2(BASE_FALL_URL: str, BASE_SPRING_URL: str) -> None:
 
     removeUnavaliableCourses(dir)
 
-    print("Successfully wrote and modified offeringsData")
+    print("Successfully wrote and modified to offeringsData")
 
 
 def scrapeStaticFrontPage(URL: str) -> dict:
@@ -232,6 +232,9 @@ def getPrerequisites(SUBJECT_URL):
                 ##########################################################################################
     else:
         print(f'BAD response: {response.status_code}')
+
+if __name__ == "__main__":
+    getPrerequisites('https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/spring-2025/CS.html')
 
 
 """'''######'''

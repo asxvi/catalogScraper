@@ -4,7 +4,10 @@ import re
 from typing import List
 import os
 
-def scrapeStage1(UIC_URL: str) -> None:
+def getLinks(UIC_URL: str) -> dict:
+    return scrapeCatalogFrontPage(UIC_URL)
+
+def scrapeStage1(UIC_URL: str) -> dict:
     '''
         Uses helper functions: scrapeCatalogFrontPage(), and writeCourseInfoToFileBatch() to 
         - Write to CH file all subjects the number of credit hours they take
@@ -13,7 +16,7 @@ def scrapeStage1(UIC_URL: str) -> None:
         Parameters:
             UIC_URL (str): UIC catalog homepage. Only used in part 1
         Returns:
-            None: On successful exit. Print to console
+            data (dict {str: str}): On successful exit. Print to console and return dict of direct links 
     '''
 
     data = scrapeCatalogFrontPage(UIC_URL)
@@ -21,7 +24,7 @@ def scrapeStage1(UIC_URL: str) -> None:
         writeCourseInfoToFileBatch(data[subject])                       # use Batch and not Stream function
 
     print("Successfully wrote to CHdata and offeringsData")
-
+    return data
 
 
 def convHoursStrToRange(hours_str: str) -> tuple:
@@ -234,7 +237,7 @@ def writeCourseInfoToFileBatch(URL_subject: str) -> None:
 
             if not os.path.isdir(f'data/{credit_hours_folderName}'):
                 os.makedirs(f'data/{credit_hours_folderName}')
-            if not os.path.isdir(f'data/{semester_offerings_folderName}'):
+            if not os.path.isdir(f'data/{semester_offerings_folderName}'):      # can i move this outside the for loop
                 os.makedirs(f'data/{semester_offerings_folderName}')
 
         # Special case of adding the final course for each subject

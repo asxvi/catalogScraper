@@ -1,4 +1,4 @@
-from scrapeNameCH import scrapeStage1
+from scrapeNameCH import scrapeStage1, getLinks
 from scrapeSemesters import scrapeStage2
 
 ''' contains URL links to various URL's used in program'''
@@ -11,9 +11,12 @@ BASE_SPRING_URL = "https://webcs7.osss.uic.edu/schedule-of-classes/static/schedu
 if __name__ == '__main__':
     print('Running script')
 
-    scrapeStage1(UIC_URL)
+    links = getLinks(UIC_URL)
 
-    scrapeStage2(BASE_FALL_URL, BASE_SPRING_URL)
+    print(links)
+
+    # scrapeStage1(UIC_URL)
+    # scrapeStage2(BASE_FALL_URL, BASE_SPRING_URL)
 
 
     

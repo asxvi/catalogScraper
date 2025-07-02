@@ -39,7 +39,7 @@
 - [ ] Improve readme
 
 - [ ] complete prereq
-- [ ] modify semesters no default value of 0 0 
+- [X] modify semesters no default value of 0 0 
 - [ ] add time 
 
 ## quick facts about UIC catalog:
