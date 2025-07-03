@@ -12,15 +12,12 @@ if __name__ == '__main__':
     print('Running script')
 
     links = getLinks(UIC_URL)
-
-    print(links)
-
+    
     # scrapeStage1(UIC_URL)
     # scrapeStage2(BASE_FALL_URL, BASE_SPRING_URL)
 
+    # add scrapeStage3 which gets prereqs once thats done
 
-    
-    
 
     print('Successful termination')
     

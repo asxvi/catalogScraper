@@ -112,13 +112,15 @@ def getPrerequisites(SUBJECT_URL):
                 clean_prereqs = prereqs.replace("\xa0", '___')
                 
                 prevTaken = re.findall("Grade\s*of\s*[A-F]\s*or\s*better\s*in\s+([A-Z]{2,4}___[0-9]{2,3})", clean_prereqs, re.IGNORECASE)
-                concurrentTaken = re.findall("Credit\s*or\s*concurrent\s*registration\s*in\s+([A-Z]{2,4}___[0-9]{2,3})", clean_prereqs, re.IGNORECASE)
+                # concurrentTaken = re.findall("Credit\s*or\s*concurrent\s*registration\s*in\s+([A-Z]{2,4}___[0-9]{2,3})", clean_prereqs, re.IGNORECASE)
+                concurrentTaken = re.findall("\s*concurrent\s*\s+([A-Z]{2,4}___[0-9]{2,3})", clean_prereqs, re.IGNORECASE)
                 allNums = re.findall("([A-Z]{2,4}___[0-9]{2,3})", clean_prereqs, re.IGNORECASE)
                 
                 for c in allNums:
                     if c in prevTaken:
                         rv += (f'{c}\t{course_name}\t-1\n')
                     elif c in concurrentTaken:
+                        print(f'{c}\t{course_name}\t0\n')
                         rv += (f'{c}\t{course_name}\t0\n')
                     else:
                         rv += (f'{c}\t{course_name}\t-1\n')
