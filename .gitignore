@@ -7,9 +7,7 @@ __pycache__/
 
 # data  files/directories 
 data*
-# data/
-# dataCH/
-examples/
+*.db
 
 # IDE file
 .vscode/
