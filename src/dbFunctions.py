@@ -74,6 +74,5 @@ def initDB(db_name = "uic_2425.db"):
     con.close()
 
 
-
 if __name__ == "__main__":
     initDB()

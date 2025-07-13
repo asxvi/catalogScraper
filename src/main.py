@@ -1,6 +1,7 @@
 from scrapeNameCH import scrapeStage1, getLinks
 from scrapeSemesters import scrapeStage2
 from scrapePrereq import scrapeStage3
+from dbFunctions import initDB
 
 ''' contains URL links to various URL's used in program'''
 UIC_URL = 'https://catalog.uic.edu/all-course-descriptions/'                                           # used in stage 1 of scraping
@@ -14,13 +15,12 @@ if __name__ == '__main__':
 
     links = getLinks(UIC_URL)
     
-
     scrapeStage1(links)
     scrapeStage2(BASE_FALL_URL, BASE_SPRING_URL)
-
-    # add scrapeStage3 which gets prereqs once thats done
     scrapeStage3(links)
+    #scrapestage4 for timing
     
+    initDB("testing_uic_2425.db")
 
     print('Successful termination')
     
