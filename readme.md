@@ -32,7 +32,7 @@
     pip install -r requirements.txt
 ```
 
-## Basic Usage:
+## Usage:
 * Complete Setup step above.
 * run main.py using python 3.x
 ```
