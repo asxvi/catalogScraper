@@ -14,19 +14,29 @@ def getAllTimes(SUBJECT_URL: str) -> list:
         courses = soup.find_all('div', class_='row course')
         for course in courses:
             listOfTable = []; numTimes = 0
-            currCourse = course.find('h2').text
+            vals = []; currCourse = course.find('h2').text
 
             rows = course.find_all('tr')
             header = [th.text.strip() for th in rows[0].find_all('th')]
-
             for row in rows[1:]:
-                vals = [td.text.strip() for td in row.find_all('td')]    
-                listOfTable.append(dict(zip(header, vals)))
+                for td in row.find_all('td'):
+                    # print(td)
+                    if td.get('class') is not None:         # handles separators and not good values
+                        continue
+
+                    vals.append(td.text.split)
+                    vals = [td.text.strip() for td in row.find_all('td')]    
+                    listOfTable.append(dict(zip(header, vals)))
+
+            print(listOfTable)
             
-            # print(currCourse)
-            # print(listOfTable)
-            # print()
-            # continue
+
+            if row['CRN'].isdigit() and len(row['CRN']) == 5:
+                print("valid")
+            else:
+                print('coon')
+
+            continue
 
             for row in listOfTable:
                 if 'Required' in row['CRN']:
