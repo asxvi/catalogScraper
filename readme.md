@@ -32,17 +32,29 @@
     pip install -r requirements.txt
 ```
 
+## Basic Usage:
+* Complete Setup step above.
+* run main.py using python 3.x
+```
+    python3 main.py
+```
+* Access embedded duckDB database
+```
+  duckdb [name of db] -ui
+  # https://duckdb.org/docs/stable/index
+```
+
+
+## Quick facts about UIC catalog:
+* about 7501 unique courses in UIC 2025 catalogue
+* FALL: NumSubjects: 168 NumCourses: 3157.
+* Spring: NumSubjects: 169 NumCourses: 3071.
+
 ## TODO
-- [ ] complete prereq part
-- [ ] merge into main.py and clean directory 
-- [ ] add comments and improve readbility and usability by others
-- [ ] Improve readme
-
-- [ ] complete prereq
-- [X] modify semesters no default value of 0 0 
-- [ ] add time 
-
-## quick facts about UIC catalog:
-about 7501 unique courses in UIC 2025 catalogue
-FALL: NumSubjects: 168 NumCourses: 3157.
-Spring: NumSubjects: 169 NumCourses: 3071.
+- [ ] Improve readme and documentation
+- [ ] add timestamps to DB of ingestion date/ updated date.
+- [ ] Implement UIS, UIUC scraping and logic, and DB.
+- [X] complete prereq part.
+- [X] merge into main.py and clean directory.
+- [X] add comments and improve readbility and usability by others.
+- [X] modify semesters no default value of 0 0.
