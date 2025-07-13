@@ -1,6 +1,6 @@
-from scrapeNameCH import scrapeStage1, getLinks
-from scrapeSemesters import scrapeStage2
-from scrapePrereq import scrapeStage3
+from scraping.scrapeNameCH import scrapeStage1, getLinks
+from scraping.scrapeSemesters import scrapeStage2
+from scraping.scrapePrereq import scrapeStage3
 from dbFunctions import initDB
 
 ''' contains URL links to various URL's used in program'''
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     scrapeStage3(links)
     #scrapestage4 for timing
     
-    initDB("testing_uic_2425.db")
+    initDB("uic_2425.db")
 
     print('Successful termination')
     
