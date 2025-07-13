@@ -15,8 +15,8 @@ if __name__ == '__main__':
     links = getLinks(UIC_URL)
     
 
-    # scrapeStage1(UIC_URL)
-    # scrapeStage2(BASE_FALL_URL, BASE_SPRING_URL)
+    scrapeStage1(links)
+    scrapeStage2(BASE_FALL_URL, BASE_SPRING_URL)
 
     # add scrapeStage3 which gets prereqs once thats done
     scrapeStage3(links)

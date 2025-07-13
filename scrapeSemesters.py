@@ -36,7 +36,7 @@ def scrapeStage2(BASE_FALL_URL: str, BASE_SPRING_URL: str) -> None:
         for course in avaliableCourses:
             SPRINGsemesterAvaliability.append(course)
     
-    dir = "./data/offeringsDataBatch/"                # do not change. Might add feature to change
+    dir = "./data/dataSemesters/"                # do not change. Might add feature to change
     writeSubjectCourses(dir, FALLsemesterAvaliability, 'fall')
     writeSubjectCourses(dir, SPRINGsemesterAvaliability, 'spring')
 

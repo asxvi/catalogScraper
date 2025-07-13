@@ -7,7 +7,8 @@ import os
 def getLinks(UIC_URL: str) -> dict:
     return scrapeCatalogFrontPage(UIC_URL)
 
-def scrapeStage1(UIC_URL: str) -> dict:
+# def scrapeStage1(UIC_URL: str) -> dict:
+def scrapeStage1(links):
     '''
         Uses helper functions: scrapeCatalogFrontPage(), and writeCourseInfoToFileBatch() to 
         - Write to CH file all subjects the number of credit hours they take
@@ -19,12 +20,12 @@ def scrapeStage1(UIC_URL: str) -> dict:
             data (dict {str: str}): On successful exit. Print to console and return dict of direct links 
     '''
 
-    data = scrapeCatalogFrontPage(UIC_URL)
-    for subject in data:
-        writeCourseInfoToFileBatch(data[subject])                       # use Batch and not Stream function
+    # data = scrapeCatalogFrontPage(UIC_URL
+    # for subject in data:
+    for subject in links:
+        writeCourseInfoToFileBatch(links[subject])                       # use Batch and not Stream function
 
-    print("Successfully wrote to CHdata and offeringsData")
-    return data
+    print("Successfully wrote to dataCreditHours and dataSemesters")
 
 
 def convHoursStrToRange(hours_str: str) -> tuple:
@@ -220,8 +221,8 @@ def writeCourseInfoToFileBatch(URL_subject: str) -> None:
             Errors may stem from lines that contain '.find()' or '.find_all'
     '''
 
-    credit_hours_folderName = 'CHdataBatch/'
-    semester_offerings_folderName = 'offeringsDataBatch/'
+    credit_hours_folderName = 'dataCreditHours/'
+    semester_offerings_folderName = 'dataSemesters/'
 
     response = requests.get(URL_subject)
     if response.status_code == 200:

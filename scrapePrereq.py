@@ -8,7 +8,7 @@ import os
 BASE_SPRING_URL = "https://webcs7.osss.uic.edu/schedule-of-classes/static/schedules/fall-2025/CS.html"
 
 
-def scrapeStage3(links) -> dict:
+def scrapeStage3(links):
     '''
         Uses helper functions: scrapeCatalogFrontPage(), and writeCourseInfoToFileBatch() to 
         - Write to CH file all subjects the number of credit hours they take
@@ -23,7 +23,8 @@ def scrapeStage3(links) -> dict:
     for subject in links:
         getPrerequisites(links[subject])                       # use Batch and not Stream function
 
-    print("Successfully wrote to CHdata and offeringsData")
+    print("Successfully wrote to dataPrereq")
+
 
 def getPrerequisites(SUBJECT_URL):
     '''
@@ -33,7 +34,7 @@ def getPrerequisites(SUBJECT_URL):
         RETURN: map of {str:Course -> str:Prereqs} .   i.e.  'CS141': 'CS111' ...
     '''
     
-    credit_hours_folderName = 'prereqData/'
+    credit_hours_folderName = 'dataPrereq/'
     
     response = requests.get(SUBJECT_URL)
     if response.status_code == 200:
@@ -53,8 +54,6 @@ def getPrerequisites(SUBJECT_URL):
                 prereqs = prereqMatch.group(1)
                 clean_prereqs = prereqs.replace("\xa0", '___')
                 
-                # concurrentTaken = re.findall("Credit\s*or\s*concurrent\s*registration\s*in\s+([A-Z]{2,4}___[0-9]{2,3})", clean_prereqs, re.IGNORECASE)
-                # concurrentTaken = re.findall("concurrent(?:\s+registration)?(?:\s+or)?(?:\s+[a-z]+)*\s+([A-Z]{2,4})___(\d{3})", clean_prereqs, re.IGNORECASE,)
                 prevTaken = re.findall("Grade\s*of\s*[A-F]\s*or\s*better\s*in\s+([A-Z]{2,4}___[0-9]{2,3})", clean_prereqs, re.IGNORECASE)
                 concurrentTaken = re.findall("concurrent(?:\s+registration)?(?:\s+or)?(?:\s+[a-z]+)*\s+([A-Z]{2,4}___\d{2,3})", clean_prereqs, re.IGNORECASE)
                 allNums = re.findall("([A-Z]{2,4}___[0-9]{2,3})", clean_prereqs, re.IGNORECASE)
@@ -66,6 +65,7 @@ def getPrerequisites(SUBJECT_URL):
                     else:
                         rv += (f'{c}\t{course_name}\t-1\n')
         
+        # write rv output to file 
         if not os.path.isdir(f'data/{credit_hours_folderName}'):
             os.makedirs(f'data/{credit_hours_folderName}')
         with open(f"data/{credit_hours_folderName}prerequisites{subject}.txt", 'w') as file:
