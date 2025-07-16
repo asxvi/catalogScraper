@@ -1,0 +1,19 @@
+.
+├── data/
+│ 
+├── debugging/
+│   ├── debugging.md
+│   ├── images/
+├── readme.md
+├── requirements.txt
+├── src
+│   ├── dbFunctions.py
+│   ├── directoryFunctions.py
+│   ├── main.py
+│   └── scraping
+│       ├── __init__.py
+│       ├── scrapeNameCH.py
+│       ├── scrapePrereq.py
+│       ├── scrapeSemesters.py
+│       └── scrapeTiming.py
+└── uic_2425.db

@@ -48,6 +48,7 @@ def createTables(con):
             offeredFall INT,
             offeredSpring INT
         );
+       
     ''')
 
 
